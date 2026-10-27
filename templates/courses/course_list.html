@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}課程列表 - 選課系統{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 mb-1 fw-bold text-dark">課程列表</h1>
+        <p class="text-muted mb-0">瀏覽所有可選課程，加選或退選課程</p>
+    </div>
+    <a href="{% url 'my_schedule' %}" class="btn btn-outline-primary">
+        <i class="bi bi-calendar-week me-1"></i> 查看我的課表
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" action="" class="row g-2 align-items-center">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" name="q" value="{{ query }}" class="form-control border-start-0 ps-0"
+                        placeholder="搜尋課程代碼、課程名稱或授課教師...">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    搜尋
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if not enrollment_open %}
+<div class="alert alert-warning d-flex align-items-center" role="alert">
+    <i class="bi bi-clock-history me-2 fs-5"></i>
+    <div>
+        <strong>非選課期間</strong> - 目前無法進行加選或退選操作
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-semibold">課程清單</h5>
+        <span class="badge bg-primary-subtle text-primary">共 {{ courses.count }} 門課程</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>課程資訊</th>
+                        <th>授課教師</th>
+                        <th>學分 / 類型</th>
+                        <th>上課時間與地點</th>
+                        <th class="text-center">名額狀態</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold text-dark">{{ course.name }}</div>
+                            <small class="text-muted">課程代碼：{{ course.course_code }}</small>
+                            {% if course.description %}
+                            <div class="small text-muted mt-1">{{ course.description|truncatewords:10 }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-fill text-primary me-2"></i>
+                                <span>{{ course.teacher.username|default:"未指定" }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ course.credits }} 學分</div>
+                            <span class="badge bg-secondary-subtle text-secondary mt-1">{{ course.get_course_type_display }}</span>
+                        </td>
+                        <td>
+                            {% for slot in course.time_slots.all %}
+                            <div class="mb-2">
+                                <div class="d-flex align-items-center text-dark">
+                                    <i class="bi bi-calendar3 text-primary me-2"></i>
+                                    <span class="fw-medium">{{ slot.get_day_of_week_display }} {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}</span>
+                                </div>
+                                <div class="d-flex align-items-center text-muted ms-4">
+                                    <i class="bi bi-geo-alt me-2"></i>
+                                    <span>{{ slot.classroom }}</span>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <span class="text-muted fst-italic">未安排時間</span>
+                            {% endfor %}
+                        </td>
+                        <td class="text-center">
+                            <div class="fw-semibold {% if course.is_full %}text-danger{% else %}text-success{% endif %}">
+                                {{ course.enrolled_count }} / {{ course.capacity }}
+                            </div>
+                            {% if course.is_full %}
+                            <span class="badge bg-danger-subtle text-danger">已額滿</span>
+                            {% elif course.available_slots <= 5 %}
+                            <span class="badge bg-warning-subtle text-warning">僅剩 {{ course.available_slots }} 名額</span>
+                            {% else %}
+                            <span class="badge bg-success-subtle text-success">尚有名額</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if course.id in enrolled_course_ids %}
+                            <form method="post" action="{% url 'drop_course' course.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm" {% if not enrollment_open %}disabled{% endif %}>
+                                    <i class="bi bi-x-circle me-1"></i> 退選
+                                </button>
+                            </form>
+                            {% else %}
+                            <form method="post" action="{% url 'enroll_course' course.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm" {% if not enrollment_open or course.is_full %}disabled{% endif %}>
+                                    <i class="bi bi-plus-circle me-1"></i> 加選
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2 mb-0">目前沒有符合搜尋條件的課程</p>
+                            {% if query %}
+                            <a href="{% url 'course_list' %}" class="btn btn-link btn-sm">清除搜尋</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
