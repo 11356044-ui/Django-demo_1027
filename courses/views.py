@@ -31,6 +31,7 @@ def has_time_conflict(student, course):
 @login_required
 def course_list(request):
     query = request.GET.get('q', '')
+    grade_filter = request.GET.get('grade', '')
     courses = Course.objects.all().prefetch_related('time_slots')
     
     if query:
@@ -40,6 +41,9 @@ def course_list(request):
             Q(teacher__username__icontains=query)
         )
     
+    if grade_filter:
+        courses = courses.filter(grade=grade_filter)
+    
     # Get student's enrolled courses
     enrolled_course_ids = Enrollment.objects.filter(student=request.user).values_list('course_id', flat=True)
     
@@ -47,7 +51,9 @@ def course_list(request):
         'courses': courses,
         'enrolled_course_ids': enrolled_course_ids,
         'query': query,
+        'grade_filter': grade_filter,
         'enrollment_open': is_enrollment_period_open(),
+        'grade_choices': Course.GRADE_CHOICES,
     }
     return render(request, 'courses/course_list.html', context)
 

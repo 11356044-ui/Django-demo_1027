@@ -9,6 +9,12 @@ class Course(models.Model):
         ('elective', '選修'),
         ('general', '通識'),
     ]
+    GRADE_CHOICES = [
+        (1, '一年級'),
+        (2, '二年級'),
+        (3, '三年級'),
+        (4, '四年級'),
+    ]
     
     course_code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
@@ -16,6 +22,7 @@ class Course(models.Model):
     teacher = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='courses_teaching')
     credits = models.IntegerField(default=2)
     course_type = models.CharField(max_length=10, choices=COURSE_TYPE_CHOICES, default='elective')
+    grade = models.IntegerField(choices=GRADE_CHOICES, null=True, blank=True, verbose_name='適用年級')
     capacity = models.IntegerField(default=30)
     enrolled_count = models.IntegerField(default=0)
     
