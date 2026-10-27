@@ -135,20 +135,26 @@
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            {% if course.id in enrolled_course_ids %}
-                            <form method="post" action="{% url 'drop_course' course.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-danger btn-sm" {% if not enrollment_open %}disabled{% endif %}>
-                                    <i class="bi bi-x-circle me-1"></i> 退選
-                                </button>
-                            </form>
+                            {% if user.is_authenticated %}
+                                {% if course.id in enrolled_course_ids %}
+                                <form method="post" action="{% url 'drop_course' course.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" {% if not enrollment_open %}disabled{% endif %}>
+                                        <i class="bi bi-x-circle me-1"></i> 退選
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form method="post" action="{% url 'enroll_course' course.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm" {% if not enrollment_open or course.is_full %}disabled{% endif %}>
+                                        <i class="bi bi-plus-circle me-1"></i> 加選
+                                    </button>
+                                </form>
+                                {% endif %}
                             {% else %}
-                            <form method="post" action="{% url 'enroll_course' course.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success btn-sm" {% if not enrollment_open or course.is_full %}disabled{% endif %}>
-                                    <i class="bi bi-plus-circle me-1"></i> 加選
-                                </button>
-                            </form>
+                                <a href="{% url 'login' %}?next={% url 'course_list' %}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> 登入後選課
+                                </a>
                             {% endif %}
                         </td>
                     </tr>

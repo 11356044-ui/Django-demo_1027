@@ -28,7 +28,6 @@ def has_time_conflict(student, course):
     return False
 
 
-@login_required
 def course_list(request):
     query = request.GET.get('q', '')
     grade_filter = request.GET.get('grade', '')
@@ -44,8 +43,10 @@ def course_list(request):
     if grade_filter:
         courses = courses.filter(grade=grade_filter)
     
-    # Get student's enrolled courses
-    enrolled_course_ids = Enrollment.objects.filter(student=request.user).values_list('course_id', flat=True)
+    # Get student's enrolled courses if logged in
+    enrolled_course_ids = []
+    if request.user.is_authenticated:
+        enrolled_course_ids = Enrollment.objects.filter(student=request.user).values_list('course_id', flat=True)
     
     context = {
         'courses': courses,
