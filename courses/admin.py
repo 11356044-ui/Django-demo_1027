@@ -12,6 +12,17 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ['course_code', 'name', 'teacher', 'credits', 'course_type', 'grade', 'enrolled_count', 'capacity', 'is_full']
     list_filter = ['course_type', 'grade', 'teacher']
     search_fields = ['course_code', 'name']
+    fieldsets = (
+        ('基本資料', {
+            'fields': ('course_code', 'name', 'teacher', 'credits', 'course_type', 'grade', 'capacity')
+        }),
+        ('課程介紹', {
+            'fields': ('description', 'objectives')
+        }),
+        ('教學大綱', {
+            'fields': ('syllabus',)
+        }),
+    )
     inlines = [CourseTimeSlotInline]
 
 

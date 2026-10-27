@@ -126,3 +126,17 @@ def my_schedule(request):
         'courses': courses,
     }
     return render(request, 'courses/my_schedule.html', context)
+
+
+def course_detail(request, course_id):
+    course = get_object_or_404(Course.objects.prefetch_related('time_slots', 'teacher'), pk=course_id)
+    enrolled = False
+    if request.user.is_authenticated:
+        enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+    
+    context = {
+        'course': course,
+        'enrolled': enrolled,
+        'enrollment_open': is_enrollment_period_open(),
+    }
+    return render(request, 'courses/course_detail.html', context)

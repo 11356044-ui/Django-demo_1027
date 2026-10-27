@@ -68,7 +68,9 @@
                     {% for enrollment in enrollments %}
                     <tr>
                         <td>
-                            <div class="fw-semibold text-dark">{{ enrollment.course.name }}</div>
+                            <a href="{% url 'course_detail' enrollment.course.id %}" class="text-decoration-none">
+                                <div class="fw-semibold text-primary">{{ enrollment.course.name }} <i class="bi bi-box-arrow-up-right small"></i></div>
+                            </a>
                             <small class="text-muted">課程代碼：{{ enrollment.course.course_code }}</small>
                         </td>
                         <td>

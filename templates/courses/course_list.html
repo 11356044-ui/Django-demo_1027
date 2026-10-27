@@ -85,7 +85,9 @@
                     {% for course in courses %}
                     <tr>
                         <td>
-                            <div class="fw-semibold text-dark">{{ course.name }}</div>
+                            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none">
+                                <div class="fw-semibold text-primary">{{ course.name }} <i class="bi bi-box-arrow-up-right small"></i></div>
+                            </a>
                             <small class="text-muted">課程代碼：{{ course.course_code }}</small>
                             {% if course.description %}
                             <div class="small text-muted mt-1">{{ course.description|truncatewords:10 }}</div>

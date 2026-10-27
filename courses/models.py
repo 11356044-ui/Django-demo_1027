@@ -18,13 +18,15 @@ class Course(models.Model):
     
     course_code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, verbose_name='課程介紹')
     teacher = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='courses_teaching')
     credits = models.IntegerField(default=2)
     course_type = models.CharField(max_length=10, choices=COURSE_TYPE_CHOICES, default='elective')
     grade = models.IntegerField(choices=GRADE_CHOICES, null=True, blank=True, verbose_name='適用年級')
     capacity = models.IntegerField(default=30)
     enrolled_count = models.IntegerField(default=0)
+    syllabus = models.TextField(blank=True, verbose_name='教學大綱')
+    objectives = models.TextField(blank=True, verbose_name='課程目標')
     
     def __str__(self):
         return f"{self.course_code} - {self.name}"
