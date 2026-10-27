@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}新增課程{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'teacher_course_list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left"></i> 返回授課清單
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0 fw-semibold"><i class="bi bi-plus-circle me-2"></i>新增課程</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-medium">課程代碼 <span class="text-danger">*</span></label>
+                    <input type="text" name="course_code" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-medium">課程名稱 <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-medium">學分</label>
+                    <input type="number" name="credits" class="form-control" value="2" min="0">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-medium">課程類型</label>
+                    <select name="course_type" class="form-select">
+                        {% for value, label in course_type_choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-medium">適用年級</label>
+                    <select name="grade" class="form-select">
+                        <option value="">不限制</option>
+                        {% for value, label in grade_choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-medium">選課人數上限</label>
+                    <input type="number" name="capacity" class="form-control" value="30" min="1">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">課程介紹</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">課程目標</label>
+                <textarea name="objectives" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">教學大綱</label>
+                <textarea name="syllabus" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> 建立課程</button>
+                <a href="{% url 'teacher_course_list' %}" class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

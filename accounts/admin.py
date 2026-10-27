@@ -4,6 +4,6 @@ from .models import Profile
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'role', 'student_id']
-    list_filter = ['role']
+    list_display = ['user', 'role', 'student_id', 'department']
+    list_filter = ['role', 'department']
     search_fields = ['user__username', 'student_id']

@@ -7,4 +7,8 @@ urlpatterns = [
     path('enroll/<int:course_id>/', views.enroll_course, name='enroll_course'),
     path('drop/<int:course_id>/', views.drop_course, name='drop_course'),
     path('my-schedule/', views.my_schedule, name='my_schedule'),
+    path('teacher/', views.teacher_course_list, name='teacher_course_list'),
+    path('teacher/create/', views.teacher_course_create, name='teacher_course_create'),
+    path('teacher/<int:course_id>/edit/', views.teacher_course_edit, name='teacher_course_edit'),
+    path('teacher/<int:course_id>/students/', views.teacher_course_students, name='teacher_course_students'),
 ]

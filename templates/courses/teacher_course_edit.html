@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}編輯課程 - {{ course.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'teacher_course_list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left"></i> 返回授課清單
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0 fw-semibold">編輯課程資料 - {{ course.course_code }} {{ course.name }}</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-medium">課程名稱</label>
+                <input type="text" name="name" class="form-control" value="{{ course.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">課程介紹</label>
+                <textarea name="description" class="form-control" rows="4">{{ course.description }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">課程目標</label>
+                <textarea name="objectives" class="form-control" rows="4">{{ course.objectives }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">教學大綱</label>
+                <textarea name="syllabus" class="form-control" rows="8">{{ course.syllabus }}</textarea>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> 儲存變更</button>
+                <a href="{% url 'teacher_course_list' %}" class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

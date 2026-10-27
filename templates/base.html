@@ -196,6 +196,14 @@
                             <i class="bi bi-calendar-week me-1"></i> 我的課表
                         </a>
                     </li>
+                    {% if user.profile.role == 'teacher' or user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}"
+                            href="{% url 'teacher_course_list' %}">
+                            <i class="bi bi-easel me-1"></i> 授課管理
+                        </a>
+                    </li>
+                    {% endif %}
                     {% endif %}
                     {% if user.is_staff %}
                     <li class="nav-item">

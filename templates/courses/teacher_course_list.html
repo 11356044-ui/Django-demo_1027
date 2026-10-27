@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}我的授課課程{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 mb-1 fw-bold text-dark">我的授課課程</h1>
+        <p class="text-muted mb-0">管理您開設的課程資料與選課名單</p>
+    </div>
+    <a href="{% url 'teacher_course_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> 新增課程
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0 fw-semibold">授課清單</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>課程資訊</th>
+                        <th>學分 / 類型</th>
+                        <th class="text-center">選課人數</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ course.name }}</div>
+                            <small class="text-muted">課程代碼：{{ course.course_code }}</small>
+                        </td>
+                        <td>
+                            <div>{{ course.credits }} 學分</div>
+                            <span class="badge bg-secondary-subtle text-secondary">{{ course.get_course_type_display }}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-semibold">{{ course.enrolled_count }}</span> / {{ course.capacity }}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{% url 'teacher_course_edit' course.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil"></i> 編輯課程
+                                </a>
+                                <a href="{% url 'teacher_course_students' course.id %}" class="btn btn-outline-info btn-sm">
+                                    <i class="bi bi-people"></i> 選課名單
+                                </a>
+                                <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-eye"></i> 預覽
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">目前沒有授課課程</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
